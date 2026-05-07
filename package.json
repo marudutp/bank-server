@@ -1,0 +1,20 @@
+{
+  "name": "bank-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node bank-server.js",
+    "dev": "tsx bank-server.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^4.22.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.25",
+    "@types/node": "^20.19.39",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
