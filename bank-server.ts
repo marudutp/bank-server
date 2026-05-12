@@ -7,10 +7,35 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
 
+
+const allowedOrigins = [
+    "https://campus3d-theta.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:5000"
+];
 // ============================================
 // MIDDLEWARE
 // ============================================
-app.use(cors({ origin: "*", credentials: true }));
+// app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({
+    origin: (origin, callback) => {
+
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log("❌ BLOCKED BANK ORIGIN:", origin);
+            callback(new Error("Not allowed by CORS"));
+        }
+
+    },
+
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
