@@ -87,7 +87,7 @@ const initDemoData = () => {
     for (let i = 1; i <= 10; i++) {
         balances.set(`student_demo_${i}`, {
             userId: `student_demo_${i}`,
-            amount: 1000000,
+            amount: 10000000,
             currency: 'IDR',
             lastUpdated: new Date()
         });
