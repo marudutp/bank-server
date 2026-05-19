@@ -1,4 +1,5 @@
-import express from 'express';
+// @ts-nocheck
+// import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import cors from 'cors';
@@ -7,12 +8,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
 
+// ============================================
+// KONSTANTA DEFAULT BALANCE
+// ============================================
+const DEFAULT_BALANCE = 100_000_000; // 100 juta IDR
 
 const allowedOrigins = [
     "https://campus3d-delta.vercel.app",
     "http://localhost:5173",
     "http://localhost:5000"
 ];
+
 // ============================================
 // MIDDLEWARE
 // ============================================
@@ -44,41 +50,41 @@ app.use(express.urlencoded({ extended: true }));
 // ============================================
 
 // User balances
-interface Balance {
-    userId: string;
-    amount: number;
-    currency: string;
-    lastUpdated: Date;
-}
+// interface Balance {
+//     userId: string;
+//     amount: number;
+//     currency: string;
+//     lastUpdated: Date;
+// }
 
-const balances = new Map<string, Balance>();
+const balances = new Map();
 
 // Transactions
-interface Transaction {
-    id: string;
-    fromUserId: string;
-    toUserId: string;
-    amount: number;
-    type: string;
-    status: string;
-    timestamp: Date;
-    description?: string;
-}
+// interface Transaction {
+//     id: string;
+//     fromUserId: string;
+//     toUserId: string;
+//     amount: number;
+//     type: string;
+//     status: string;
+//     timestamp: Date;
+//     description?: string;
+// }
 
-const transactions: Transaction[] = [];
+const transactions = [];
 
 // Initialize demo data
 const initDemoData = () => {
     // Teacher demo accounts
     balances.set('teacher_demo', {
         userId: 'teacher_demo',
-        amount: 5000000,
+        amount: DEFAULT_BALANCE,
         currency: 'IDR',
         lastUpdated: new Date()
     });
     balances.set('admin_001', {
         userId: 'admin_001',
-        amount: 10000000,
+        amount: DEFAULT_BALANCE,
         currency: 'IDR',
         lastUpdated: new Date()
     });
@@ -87,7 +93,7 @@ const initDemoData = () => {
     for (let i = 1; i <= 10; i++) {
         balances.set(`student_demo_${i}`, {
             userId: `student_demo_${i}`,
-            amount: 10000000,
+            amount: DEFAULT_BALANCE,
             currency: 'IDR',
             lastUpdated: new Date()
         });
@@ -177,7 +183,7 @@ app.post('/pay', async (req, res) => {
         if (!studentBalance) {
             studentBalance = {
                 userId: studentId,
-                amount: 0,
+                amount: DEFAULT_BALANCE,   // <-- PERUBAHAN: pakai konstanta
                 currency: 'IDR',
                 lastUpdated: new Date()
             };
@@ -187,7 +193,7 @@ app.post('/pay', async (req, res) => {
         if (!teacherBalance) {
             teacherBalance = {
                 userId: teacherId,
-                amount: 0,
+                amount: DEFAULT_BALANCE,   // <-- PERUBAHAN: teacher juga dapat default (opsional)
                 currency: 'IDR',
                 lastUpdated: new Date()
             };
@@ -216,7 +222,7 @@ app.post('/pay', async (req, res) => {
         teacherBalance.lastUpdated = new Date();
 
         // Record transaction
-        const transaction: Transaction = {
+        const transaction = {
             id: transactionId,
             fromUserId: studentId,
             toUserId: teacherId,
@@ -290,7 +296,7 @@ app.post('/refund', async (req, res) => {
         teacherBalance.amount -= totalRefund;
         teacherBalance.lastUpdated = new Date();
 
-        const refundTransactions: any[] = [];
+        const refundTransactions = [];
 
         // Add to each student
         for (const studentId of studentIds) {
@@ -310,7 +316,7 @@ app.post('/refund', async (req, res) => {
 
             // Record transaction
             const transactionId = `refund_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-            const transaction: Transaction = {
+            const transaction = {
                 id: transactionId,
                 fromUserId: teacherId,
                 toUserId: studentId,
