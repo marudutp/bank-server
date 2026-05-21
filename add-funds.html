@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Bank Server - Tambah Dana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .user-select {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .user-option {
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 13px;
+            background: #f8f9fa;
+        }
+
+        .user-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .user-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        button {
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-reset {
+            background: #f0f4ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-reset:hover {
+            background: #e1e8ff;
+        }
+
+        .btn-check {
+            background: #f0f4ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-check:hover {
+            background: #e1e8ff;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 16px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f0f4ff;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-info {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-info strong {
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .balance-info {
+            background: #f0f4ff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            border: 2px solid #667eea;
+            display: none;
+        }
+
+        .balance-info.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .balance-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .transaction-history {
+            margin-top: 32px;
+            border-top: 1px solid #e1e8ed;
+            padding-top: 24px;
+        }
+
+        .transaction-history h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .transaction-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-user {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            color: #667eea;
+            text-align: right;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e1e8ed;
+            margin: 24px 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 24px 20px;
+            }
+
+            .user-select {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Tambah Dana</h1>
+            <p>Bank Server Management System</p>
+        </div>
+
+        <div class="content">
+            <!-- Alert Messages -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+            <div class="alert alert-info" id="infoAlert"></div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+            </div>
+
+            <!-- Form Info -->
+            <div class="form-info">
+                <strong>📋 Informasi Penting:</strong>
+                Gunakan form ini untuk menambahkan dana ke akun pengguna. Tersedia opsi akun demo atau masukkan User ID custom.
+            </div>
+
+            <!-- Form -->
+            <form id="addFundsForm">
+                <!-- User Selection -->
+                <div class="form-group">
+                    <label>👤 Pilih Pengguna</label>
+                    <select id="userType" name="userType">
+                        <option value="">-- Pilih Tipe --</option>
+                        <option value="demo">📚 Akun Demo</option>
+                        <option value="custom">✏️ Input Custom User ID</option>
+                    </select>
+                </div>
+
+                <!-- Demo Users Selection -->
+                <div class="form-group" id="demoUsersGroup" style="display: none;">
+                    <label>📚 Pilih Akun Demo</label>
+                    <select id="demoUserId" name="demoUserId">
+                        <option value="">-- Pilih --</option>
+                        <option value="teacher_demo">👨‍🏫 Teacher Demo</option>
+                        <option value="admin_001">👨‍💼 Admin 001</option>
+                        <option value="student_demo_1">👨‍🎓 Student Demo 1</option>
+                        <option value="student_demo_2">👨‍🎓 Student Demo 2</option>
+                        <option value="student_demo_3">👨‍🎓 Student Demo 3</option>
+                        <option value="student_demo_4">👨‍🎓 Student Demo 4</option>
+                        <option value="student_demo_5">👨‍🎓 Student Demo 5</option>
+                        <option value="student_demo_6">👨‍🎓 Student Demo 6</option>
+                        <option value="student_demo_7">👨‍🎓 Student Demo 7</option>
+                        <option value="student_demo_8">👨‍🎓 Student Demo 8</option>
+                        <option value="student_demo_9">👨‍🎓 Student Demo 9</option>
+                        <option value="student_demo_10">👨‍🎓 Student Demo 10</option>
+                    </select>
+                </div>
+
+                <!-- Custom User ID -->
+                <div class="form-group" id="customUserGroup" style="display: none;">
+                    <label>User ID</label>
+                    <input type="text" id="customUserId" name="customUserId" placeholder="Contoh: user_123, admin_001">
+                    <div class="helper-text">Masukkan User ID yang ingin ditambahkan dananya</div>
+                </div>
+
+                <!-- Amount -->
+                <div class="form-group">
+                    <label>💵 Jumlah Dana</label>
+                    <input type="number" id="amount" name="amount" placeholder="Contoh: 100000" min="1" step="1000" required>
+                    <div class="helper-text">Nominal dalam Rupiah (IDR), minimal 1.000</div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="button" class="btn-check" id="checkBalanceBtn">🔍 Cek Saldo</button>
+                    <button type="submit" class="btn-submit" id="submitBtn">✅ Tambah Dana</button>
+                </div>
+                <button type="reset" class="btn-reset" style="grid-column: 1 / -1; margin-top: 8px;">🔄 Reset</button>
+            </form>
+
+            <!-- Balance Info -->
+            <div class="balance-info" id="balanceInfo">
+                <div class="balance-label">💰 Saldo Terkini</div>
+                <div class="balance-amount" id="balanceAmount">Rp 0</div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="transaction-history" id="transactionHistory" style="display: none;">
+                <h3>📜 Riwayat Transaksi</h3>
+                <div class="transaction-list" id="transactionList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+
+        const form = document.getElementById('addFundsForm');
+        const userTypeSelect = document.getElementById('userType');
+        const demoUsersGroup = document.getElementById('demoUsersGroup');
+        const customUserGroup = document.getElementById('customUserGroup');
+        const demoUserSelect = document.getElementById('demoUserId');
+        const customUserInput = document.getElementById('customUserId');
+        const amountInput = document.getElementById('amount');
+        const checkBalanceBtn = document.getElementById('checkBalanceBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        const infoAlert = document.getElementById('infoAlert');
+        const balanceInfo = document.getElementById('balanceInfo');
+        const balanceAmount = document.getElementById('balanceAmount');
+        const transactionHistory = document.getElementById('transactionHistory');
+        const transactionList = document.getElementById('transactionList');
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Show alert
+        function showAlert(type, message) {
+            const alertEl = type === 'success' ? successAlert : (type === 'error' ? errorAlert : infoAlert);
+            alertEl.textContent = message;
+            alertEl.classList.add('show');
+            setTimeout(() => alertEl.classList.remove('show'), 5000);
+        }
+
+        // Show loading
+        function setLoading(show) {
+            loading.classList.toggle('show', show);
+            submitBtn.disabled = show;
+            checkBalanceBtn.disabled = show;
+        }
+
+        // Get selected user ID
+        function getSelectedUserId() {
+            if (userTypeSelect.value === 'demo') {
+                return demoUserSelect.value || null;
+            } else if (userTypeSelect.value === 'custom') {
+                return customUserInput.value.trim() || null;
+            }
+            return null;
+        }
+
+        // Handle user type change
+        userTypeSelect.addEventListener('change', (e) => {
+            demoUsersGroup.style.display = e.target.value === 'demo' ? 'block' : 'none';
+            customUserGroup.style.display = e.target.value === 'custom' ? 'block' : 'none';
+            balanceInfo.classList.remove('show');
+            demoUserSelect.value = '';
+            customUserInput.value = '';
+        });
+
+        // Check balance
+        checkBalanceBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const userId = getSelectedUserId();
+
+            if (!userId) {
+                showAlert('error', '❌ Pilih pengguna terlebih dahulu');
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}/balance/${userId}`);
+                const data = await response.json();
+
+                if (data.balance !== undefined) {
+                    balanceAmount.textContent = formatCurrency(data.balance);
+                    balanceInfo.classList.add('show');
+                    showAlert('info', `✅ Saldo ${userId}: ${formatCurrency(data.balance)}`);
+                    loadTransactionHistory(userId);
+                } else {
+                    showAlert('error', 'Gagal mengambil saldo');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('error', `❌ Error: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Load transaction history
+        async function loadTransactionHistory(userId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/transactions/${userId}`);
+                const data = await response.json();
+
+                if (data.transactions && data.transactions.length > 0) {
+                    transactionHistory.style.display = 'block';
+                    transactionList.innerHTML = data.transactions.slice(0, 10).map(t => `
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-user">${t.type === 'payment' ? '→' : '←'} ${t.type === 'payment' ? t.toUserId : t.fromUserId}</div>
+                                <div style="font-size: 11px; color: #999; margin-top: 4px;">${new Date(t.timestamp).toLocaleString('id-ID')}</div>
+                            </div>
+                            <div class="transaction-amount">${t.type === 'payment' ? '-' : '+'}${formatCurrency(t.amount)}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    transactionHistory.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+            }
+        }
+
+        // Submit form
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = getSelectedUserId();
+            const amount = parseInt(amountInput.value);
+
+            if (!userId) {
+                showAlert('error', '❌ Pilih pengguna terlebih dahulu');
+                return;
+            }
+
+            if (!amount || amount <= 0) {
+                showAlert('error', '❌ Jumlah dana harus lebih dari 0');
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/add-balance`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        amount: amount
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('success', `✅ Berhasil! Ditambahkan ${formatCurrency(amount)} ke ${userId}. Saldo baru: ${formatCurrency(data.newBalance)}`);
+                    form.reset();
+                    userTypeSelect.dispatchEvent(new Event('change'));
+                    balanceInfo.classList.remove('show');
+                    transactionHistory.style.display = 'none';
+                    amountInput.focus();
+                } else {
+                    showAlert('error', `❌ Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('error', `❌ Error: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Form validation on input
+        amountInput.addEventListener('input', (e) => {
+            if (e.target.value < 0) {
+                e.target.value = '';
+            }
+        });
+
+        // Show info on page load
+        showAlert('info', '💡 Selamat datang! Pilih pengguna dan jumlah dana untuk ditambahkan.');
+    </script>
+</body>
+</html>
